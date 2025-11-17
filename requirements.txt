@@ -1,0 +1,23 @@
+fastapi
+uvicorn[standard]
+
+sqlalchemy
+psycopg2-binary
+
+python-multipart
+pydantic[email]
+
+passlib[bcrypt]
+python-jose[cryptography]
+
+pdfplumber
+python-docx
+
+openai
+tiktoken
+
+# Test-library
+pytest
+pytest-asyncio
+httpx
+coverage

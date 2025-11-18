@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field, validator
 
 class UserCreate(BaseModel):
@@ -17,7 +18,7 @@ class UserResponse(BaseModel):
     id: int
     full_name: str
     email: EmailStr
-    created_at: str
+    created_at: datetime
 
     class Config:
         orm_mode = True

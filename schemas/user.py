@@ -1,10 +1,18 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, validator
 
 class UserCreate(BaseModel):
     full_name: str 
     email: EmailStr
-    password: str
+    password: str 
     
+    @validator('password')
+    def validate_password(cls, value):
+        if not value:
+            raise ValueError("Password must not be empty")
+        if len(value.encode("utf-8")) > 72:
+            raise ValueError("Password must not exceed 72 bytes")
+        return value
+
 class UserResponse(BaseModel):
     id: int
     full_name: str

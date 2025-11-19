@@ -12,6 +12,7 @@ class ResumeResponse(BaseModel):
     parsed_text: str | None
     created_at: datetime
 
+    # Tells Pydantic that this schema can read data from ORM objects
     class Config:
         orm_mode = True
    

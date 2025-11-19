@@ -33,7 +33,7 @@ async def upload_resume(
     # parse file to extract resume data
     parsed_text = parse_resume(file_location)
     
-    # Save resume record in the database
+    # Save resume record in database using class Resume(Base) in models/resume.py
     new_resume = Resume(
         user_id=current_user.id,
         file_name=file.filename,

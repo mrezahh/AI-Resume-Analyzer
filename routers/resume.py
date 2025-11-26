@@ -8,12 +8,14 @@ from models.resume import Resume
 from schemas.resume import ResumeResponse
 from utils.file_parser import analyze_resume
 from routers.auth import get_current_user
+from utils.ai_model import analyze_resume_with_ai
 
 UPLOAD_FOLDER = "uploaded_resumes"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
+# ================= Upload Resume =================
 @router.post("/upload", response_model=ResumeResponse)
 async def upload_resume(
     file: UploadFile = File(...),
@@ -36,16 +38,19 @@ async def upload_resume(
     # parse and analyze resume
     parsed_info = analyze_resume(file_location)
     
+    # Further analyze with AI model
+    ai_parsed_info = analyze_resume_with_ai(parsed_info.get('parsed_text', ''))
+    
     # Save resume record in database using class Resume(Base) in models/resume.py
     new_resume = Resume(
         user_id=current_user.id,
         file_name=file.filename,
         file_path=file_location,
-        parsed_text=parsed_info.get('parsed_text'),
-        name=parsed_info.get('name'),
-        email=parsed_info.get('email'),
-        phone_number=parsed_info.get('phone_number'),
-        skills=parsed_info.get('skills')      
+        parsed_text=ai_parsed_info.get('parsed_text'),
+        name=ai_parsed_info.get('name'),
+        email=ai_parsed_info.get('email'),
+        phone_number=ai_parsed_info.get('phone_number'),
+        skills=ai_parsed_info.get('skills')      
     )
     db.add(new_resume)
     db.commit()

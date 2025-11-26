@@ -15,4 +15,13 @@ class ResumeResponse(BaseModel):
     # Tells Pydantic that this schema can read data from ORM objects
     class Config:
         orm_mode = True
-   
+        
+class ResumeAIAnalyzeResponse(BaseModel):
+    summary: str | None
+    skills: str | None
+    missing_skills: str | None
+    score: int | None
+    suggestions: str | None
+    analyzed_at: datetime | None
+    class Config:
+        orm_mode = True

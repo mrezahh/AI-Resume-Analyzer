@@ -6,12 +6,30 @@ from fastapi.security import OAuth2PasswordRequestForm
 from database import get_db
 from models.resume import Resume
 from schemas.resume import ResumeResponse
+
+from utils.auth import get_current_user
 from utils.file_parser import analyze_resume
-from routers.auth import get_current_user
 from utils.ai_model import analyze_resume_with_ai
 
 UPLOAD_FOLDER = "uploaded_resumes"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def convert_resume_model(resume):
+    """Convert Database resume info to API dictionary."""
+    return {
+        "id": resume.id,
+        "user_id": resume.user_id,
+        "file_name": resume.file_name,
+        "file_path": resume.file_path,
+        "parsed_text": resume.parsed_text,
+        "created_at": resume.created_at,
+        "name": resume.name,
+        "email": resume.email,
+        "phone_number": resume.phone_number,
+        "skills": resume.skills.split(',') if resume.skills else [],
+        "experience_summary": resume.experience_summary if hasattr(resume, 'experience_summary') else None,
+    }
+
 
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
@@ -35,28 +53,42 @@ async def upload_resume(
         content = await file.read()
         f.write(content)
         
-    # parse and analyze resume
+    # Extract raw text and info with parser
     parsed_info = analyze_resume(file_location)
     
-    # Further analyze with AI model
-    ai_parsed_info = analyze_resume_with_ai(parsed_info.get('parsed_text', ''))
+    # AI Analysis (summary + suggestions)
+    ai_result = analyze_resume_with_ai(parsed_info.get('parsed_text', ''))
+    experience_summary = ai_result.get('experience_summary', '')
     
-    # Save resume record in database using class Resume(Base) in models/resume.py
+    # Use classical parser values (not AI) for Database safe structured 
+    extracted_name = parsed_info.get('name')
+    extracted_email = parsed_info.get('email')
+    extracted_phone = parsed_info.get('phone')
+    extracted_skills = parsed_info.get('skills', [])
+    
+    
+    # Save to Database
     new_resume = Resume(
         user_id=current_user.id,
         file_name=file.filename,
         file_path=file_location,
-        parsed_text=ai_parsed_info.get('parsed_text'),
-        name=ai_parsed_info.get('name'),
-        email=ai_parsed_info.get('email'),
-        phone_number=ai_parsed_info.get('phone_number'),
-        skills=ai_parsed_info.get('skills')      
+        
+        # Raw parsed text - stored for reference
+        parsed_text=parsed_info.get('parsed_text'),
+        
+        # Stracture fields -> paser output 
+        name=extracted_name,
+        email=extracted_email,
+        phone=extracted_phone,
+        skills=",".join(extracted_skills),  # Store as comma-separated string
+        experience_summary=experience_summary
     )
+     
     db.add(new_resume)
     db.commit()
     db.refresh(new_resume)
     
-    return new_resume
+    return convert_resume_model(new_resume)
 
 # ================= Get Resumes =================
 @router.get("/", response_model=list[ResumeResponse])
@@ -66,8 +98,10 @@ def list_resumes(
     """List all resumes for the current user."""
     
     resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
-    return resumes
+    return [convert_resume_model(r) for r in resumes] # Database stores "Python,Java,FastAPI" → string
 
+
+# ================= Get Specific Resume with ID =================
 @router.get("/{resume_id}", response_model=ResumeResponse)
 def get_resume(
     resume_id: int,

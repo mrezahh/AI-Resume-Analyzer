@@ -2,7 +2,7 @@
 import json
 import ollama
 
-MODEL_NAME = "llama3.2.:1b"
+MODEL_NAME = "llama3.2:1b"
 
 
 def analyze_resume_with_ai(resume_text: str) -> dict:
@@ -39,11 +39,21 @@ def analyze_resume_with_ai(resume_text: str) -> dict:
             temperature=0.2
         )
 
-         # Depending on Ollama version, the response may be in response['content']
-        ai_output = response.get('content', '')
+        # Extract AI text output
+        ai_output = response['message']['content']
+        # Remove code block formatting if present
+        if ai_output.startswith("```") and ai_output.endswith("```"):
+            ai_output = ai_output.strip("```").strip()
+        # convert to dict
         result = json.loads(ai_output)
         return result
 
     except Exception as e:
         print(f"Error analyzing resume with AI: {e}")
-        return {}
+        return {
+            'name': None,
+            'email': None,
+            'phone_number': None,
+            'skills': [],
+            'experience_summary': None,
+        }

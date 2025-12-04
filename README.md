@@ -40,7 +40,7 @@ LLM model used:
 llama3.2:1b
 
 ## Stracture
-
+```
 .
 ├── core/
 │   ├── config.py
@@ -73,6 +73,7 @@ llama3.2:1b
 ├── Userstories.xlsx
 ├── README.md
 └── requirements.txt
+```
 ---
 
 ## Installation Guide

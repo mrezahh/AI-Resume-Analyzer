@@ -82,9 +82,9 @@ git clone https://github.com/mrezahh/AI-Resume-Analyzer.git
 cd AI-Resume-Analyzer
 
 ### 2. Create Virtual Environment
-python -m venv .venv
-source .venv/bin/activate       # macOS/Linux
-.\.venv\Scripts\activate        # Windows
+- python -m venv .venv
+- source .venv/bin/activate       # macOS/Linux
+- .\.venv\Scripts\activate        # Windows
 
 
 ### 3. Install Dependencies
@@ -98,15 +98,15 @@ create a database (resume_ai)
 https://ollama.com/download
 
 then pull model (terminal): 
-ollama pull llama3.2:1b
+- ollama pull llama3.2:1b
 
 ### 6. Start server
-uvicorn main:app --reload
-API avalibale at: http: //127.0.0.1:8000
+- uvicorn main:app --reload
+- API avalibale at: http: //127.0.0.1:8000
 
 ### 7. Run Test
 In terminal:
-pytest
+- pytest
 
 
 

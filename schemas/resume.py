@@ -8,12 +8,12 @@ class ResumeBase(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None
     phone_number: Optional[str] = None
-    skills: Optional[str] = None
+    skills: Optional[List[str]] = None
     experience_summary: Optional[str] = None
     parsed_text: Optional[str] = None
     
 # ======== Resume Create and Response Schemas ========
-class ResumeCreate(BaseModel):
+class ResumeCreate(ResumeBase):
     pass
 
 # ======== Resume Response Schema ========
@@ -22,11 +22,11 @@ class ResumeResponse(ResumeBase):
     user_id: int
     file_name: str
     file_path: str
-    uploaded_at: datetime 
+    created_at: datetime 
 
     # Tells Pydantic that this schema can read data from ORM objects
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # ======== Resume AI Analyze Response Schema (match ai_model.py output) ========    
 class ResumeAIAnalyzeResponse(BaseModel):
@@ -35,6 +35,10 @@ class ResumeAIAnalyzeResponse(BaseModel):
     phone_number: Optional[str]
     skills: Optional[List[str]]
     experience_summary: Optional[str]
+    skill_gaps: Optional[List[str]]
+    weak_points: Optional[List[str]]
+    matching_job_titles: Optional[List[str]]
+    suggestions: Optional[List[str]]
    
     class Config:
-        orm_mode = True
+        from_attributes = True

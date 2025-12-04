@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from database import get_db
 from models.resume import Resume
-from schemas.resume import ResumeResponse
+from schemas.resume import ResumeAIAnalyzeResponse, ResumeResponse
 
 from utils.auth import get_current_user
 from utils.file_parser import analyze_resume
@@ -79,7 +79,7 @@ async def upload_resume(
         # Stracture fields -> paser output 
         name=extracted_name,
         email=extracted_email,
-        phone=extracted_phone,
+        phone_number=extracted_phone,
         skills=",".join(extracted_skills),  # Store as comma-separated string
         experience_summary=experience_summary
     )
@@ -150,3 +150,29 @@ def delete_resume(
     db.commit()
     
     return {"detail": "Resume deleted successfully."}
+
+@router.get("/{resume_id}/ai-analyze", response_model=ResumeAIAnalyzeResponse)
+def ai_analysis(resume_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)):
+    """Get AI analysis for a specific resume by ID for the current user."""
+    
+    resume = db.query(Resume).filter(
+        Resume.id == resume_id,
+        Resume.user_id == current_user.id
+    ).first()
+    
+    if not resume:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Resume not found."
+        )
+    try: 
+        ai_result = analyze_resume_with_ai(resume.parsed_text or "")
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            ai_result = {"skill_gaps": [], "weak_points": [], "matching_job_titles": [], "suggestions": []}
+        )
+    
+    return ai_result

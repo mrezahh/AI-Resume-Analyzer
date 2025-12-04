@@ -40,33 +40,34 @@ LLM model used:
 llama3.2:1b
 
 ## Stracture
+
 .
 ├── core/
-│ ├── config.py
-│ └── security.py
+│   ├── config.py
+│   └── security.py
 │
 ├── utils/
-│ ├── ai_model.py
-│ ├── auth.py
-│ ├── security.py
-│ └── file_parser.py
+│   ├── ai_model.py
+│   ├── auth.py
+│   ├── security.py
+│   └── file_parser.py
 │
 ├── models/
-│ ├── user.py
-│ ├── resume.py
-│ └── job.py
+│   ├── user.py
+│   ├── resume.py
+│   └── job.py
 │
 ├── routers/
-│ └── resume.py
+│   └── resume.py
 │
 ├── schemas/
-│ ├── user.py
-│ └── resume.py
+│   ├── user.py
+│   └── resume.py
 │
 ├── test/
-│ ├── conftest.py
-│ ├── test_auth.py
-│ └── test_resume.py
+│   ├── conftest.py
+│   ├── test_auth.py
+│   └── test_resume.py
 │
 ├── main.py
 ├── Userstories.xlsx

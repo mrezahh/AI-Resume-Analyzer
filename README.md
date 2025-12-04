@@ -66,10 +66,11 @@ llama3.2:1b
 │
 ├── test/
 │ ├── conftest.py
-│ └── test_auth.py
+│ ├── test_auth.py
 │ └── test_resume.py
 │
 ├── main.py
+├── Userstories.xlsx
 ├── README.md
 └── requirements.txt
 

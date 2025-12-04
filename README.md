@@ -104,7 +104,7 @@ ollama pull llama3.2:1b
 uvicorn main:app --reload
 API avalibale at: http: //127.0.0.1:8000
 
-### 7. run Test
+### 7. Run Test
 In terminal:
 pytest
 

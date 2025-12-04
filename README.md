@@ -73,9 +73,6 @@ llama3.2:1b
 ├── Userstories.xlsx
 ├── README.md
 └── requirements.txt
-
-
-
 ---
 
 ## Installation Guide

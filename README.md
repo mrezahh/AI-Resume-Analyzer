@@ -21,8 +21,7 @@ The system allows users to:
 ### Resume Upload
 Users can upload:
 - PDF  
-- DOCX  
-- TXT  
+- DOCX   
 
 Resume content is extracted and stored in PostgreSQL.
 
